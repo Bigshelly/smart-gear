@@ -1,12 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { CartProvider } from './context/CartContext'
-import Layout from './components/Layout'
-import Home from './pages/Home'
-import ProductDetails from './pages/ProductDetails'
-import Checkout from './pages/Checkout'
-import Success from './pages/Success'
-import Error from './pages/Error'
-import './App.css'
+
 
 function App() {
   return (
@@ -34,4 +26,4 @@ function App() {
   )
 }
 
-export default App
+export default Appert

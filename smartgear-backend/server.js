@@ -31,6 +31,7 @@ app.use(cors({
       'http://localhost:5173',
       'http://127.0.0.1:5173',
       'http://10.228.1.91:5173',
+      'https://smart-gear-b2wvaap9s-bigshellys-projects.vercel.app',
       process.env.FRONTEND_URL
     ].filter(Boolean)
     
@@ -41,11 +42,18 @@ app.use(cors({
       return normalizedAllowed === normalizedOrigin
     })
     
-    if (isAllowed) {
+    // Also allow any Vercel preview/production domains for this project
+    const isVercelDomain = origin.includes('vercel.app') && 
+                          (origin.includes('smart-gear') || origin.includes('bigshellys-projects'))
+    
+    const finalAllowed = isAllowed || isVercelDomain
+    
+    if (finalAllowed) {
       callback(null, true)
     } else {
       console.log('CORS blocked origin:', origin)
       console.log('Allowed origins:', allowedOrigins)
+      console.log('Is Vercel domain:', isVercelDomain)
       callback(new Error('Not allowed by CORS'))
     }
   },

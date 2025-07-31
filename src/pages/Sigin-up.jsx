@@ -10,25 +10,52 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
 
 function SignUp() {
   return (
     <div>
-      <div className="  md:bg-gray-100 max-h-screen flex flex-col ">
+      <div className=" max-h-screen flex flex-col ">
         <div className="flex items-center mx-auto justify-center p-3 md:p-12">
           <div className="w-full max-w-md flex items-center max-h-screen mx-auto justify-center ">
             <Card className="w-full max-w-sm">
               <CardHeader>
-                <CardTitle>Sign up to create an account</CardTitle>
-                <CardDescription>
-                  Enter your details below to create a new account
+                <CardTitle className="text-2xl  text-center font-bold">
+                  Create Account
+                </CardTitle>
+                <CardDescription className="text-center">
+                  Enter your information to get started.{" "}
                 </CardDescription>
-
-                <Button variant="link">Login</Button>
               </CardHeader>
               <CardContent>
                 <form>
                   <div className="flex flex-col gap-6 ">
+                    <div className=" flex items-center  gap-6 ">
+                      <div className="flex flex-col">
+                        <Label htmlFor="email" className=" mb-2">
+                          First name
+                        </Label>
+                        <Input
+                          id="firstname"
+                          type="text"
+                          placeholder="John"
+                          required
+                          className="px-12 "
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <Label htmlFor="lastname" className="mb-2">
+                          Last name
+                        </Label>
+                        <Input
+                          id="lastname"
+                          type="text"
+                          placeholder="Doe"
+                          required
+                          className="px-12 "
+                        />
+                      </div>
+                    </div>
                     <div className="grid gap-2">
                       <Label htmlFor="email">Email</Label>
                       <Input
@@ -49,11 +76,18 @@ function SignUp() {
               </CardContent>
               <CardFooter className="flex-col gap-2">
                 <Button type="submit" className="w-full ">
-                  Sign-up
+                  Create an account
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Sign-up with Google
-                </Button>
+                <div className="flex items-center justify-center mt-2 ">
+                  <p className="text-sm text-muted-foreground  text-center">
+                    Already have an account?
+                  </p>
+                  <Link to="/login">
+                    <Button variant="link" className="text-red-400 underline">
+                      Login
+                    </Button>
+                  </Link>
+                </div>
               </CardFooter>
             </Card>
           </div>

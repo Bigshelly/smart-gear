@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 
 function Login() {
   return (
-    <div className=" md:bg-gray-100 max-h-screen ">
+    <div className=" md:bg-gray-100 ">
       <div className="flex items-center mx-auto justify-center p-3 md:p-12">
         <div className="w-full max-w-md flex items-center max-h-screen mx-auto justify-center ">
           <Card className="w-full max-w-sm">
@@ -26,7 +26,7 @@ function Login() {
             </CardHeader>
             <CardContent>
               <form>
-                <div className="flex flex-col gap-6 " >
+                <div className="flex flex-col gap-6 ">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input

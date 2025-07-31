@@ -14,20 +14,39 @@ const usePaystack = () => {
       // Prepare payment data
       const paymentPayload = {
         email: paymentInfo.email,
-        amount: paymentInfo.amount * 100, // Paystack expects amount in pesewas
+        amount: paymentInfo.amount, // Amount in GHS (backend will convert to pesewas)
         currency: paymentInfo.currency || 'GHS',
-        productId: paymentInfo.productId, // Required by backend validation
-        customerName: paymentInfo.customerName, // Required by backend validation
-        phone: paymentInfo.phone, // Required by backend validation
+        customerName: paymentInfo.customerName,
+        phone: paymentInfo.phone,
         reference: `smartgear_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         callback_url: `${window.location.origin}/success`,
-        metadata: {
+        channels: ['card', 'mobile_money'],
+      }
+
+      // Add product or cart items based on payment type
+      if (paymentInfo.cartItems) {
+        // Cart checkout
+        paymentPayload.cartItems = paymentInfo.cartItems
+        paymentPayload.metadata = {
           customer_name: paymentInfo.customerName,
           customer_phone: paymentInfo.phone,
+          user_id: paymentInfo.userId, // Include user ID for backend cart clearing
+          checkout_type: 'cart',
+          item_count: paymentInfo.cartItems.length,
+        }
+      } else if (paymentInfo.productId) {
+        // Single product checkout
+        paymentPayload.productId = paymentInfo.productId
+        paymentPayload.metadata = {
+          customer_name: paymentInfo.customerName,
+          customer_phone: paymentInfo.phone,
+          user_id: paymentInfo.userId, // Include user ID for backend cart clearing
           product_id: paymentInfo.productId,
           product_name: paymentInfo.productName,
-        },
-        channels: ['card', 'mobile_money'],
+          checkout_type: 'single',
+        }
+      } else {
+        throw new Error('Either productId or cartItems must be provided')
       }
 
       // Initialize payment with backend

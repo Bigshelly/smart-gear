@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import PaymentStatus from '../components/PaymentStatus'
 import usePaystack from '../hooks/usePaystack'
+import { useCart } from '../context/CartContext'
 
 const Success = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { verifyPayment } = usePaystack()
+  const { clearCart } = useCart()
   const [paymentStatus, setPaymentStatus] = useState('loading')
   const [paymentDetails, setPaymentDetails] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [cartCleared, setCartCleared] = useState(false)
 
   useEffect(() => {
     const reference = searchParams.get('reference')
@@ -42,6 +45,12 @@ const Success = () => {
               gateway: data.gateway || 'Paystack',
               channel: data.authorization?.channel || 'card'
             })
+            
+            // Clear cart after successful payment (only once)
+            if (!cartCleared) {
+              clearCart(true) // Silent clear - no toast notification
+              setCartCleared(true)
+            }
           } else {
             setPaymentStatus('error')
             setErrorMessage(`Payment ${data.status}. Please contact support if you believe this is an error.`)

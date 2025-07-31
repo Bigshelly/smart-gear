@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, ShoppingCart, Star, Truck, Shield, RotateCcw } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
@@ -7,7 +7,9 @@ import { Card, CardContent } from '../components/ui/card'
 import { formatPrice } from '../lib/utils'
 import { getProduct } from '../services/api'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import { toast } from '../hooks/useToast'
+import AuthModal from '../components/AuthModal'
 
 const ProductDetails = () => {
   const { productId } = useParams()
@@ -17,7 +19,10 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const { addItem } = useCart()
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -48,22 +53,40 @@ const ProductDetails = () => {
     }
   }, [productId])
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowAuthModal(true)
+      return
+    }
     
     setIsAdding(true)
     
-    // Add multiple quantities if selected
-    for (let i = 0; i < quantity; i++) {
-      addItem(product)
+    try {
+      // Add multiple quantities if selected
+      for (let i = 0; i < quantity; i++) {
+        await addItem(product)
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+    } finally {
+      setTimeout(() => setIsAdding(false), 1200)
+    }
+  }
+
+  const handleBuyNow = () => {
+    if (!product) return
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowAuthModal(true)
+      return
     }
     
-    toast.success(
-      "Added to cart!",
-      `${quantity} x ${product.name} added to your cart`
-    )
-    
-    setTimeout(() => setIsAdding(false), 1200)
+    // Proceed to checkout
+    navigate(`/checkout/${product._id || product.id}`)
   }
 
   if (loading) {
@@ -250,10 +273,14 @@ const ProductDetails = () => {
               <ShoppingCart className="w-5 h-5 mr-2" />
               {isAdding ? 'Adding...' : 'Add to Cart'}
             </Button>
-            <Button asChild size="lg" variant="outline" className="flex-1">
-              <Link to={`/checkout/${product._id || product.id}`}>
-                Buy Now
-              </Link>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="flex-1"
+              onClick={handleBuyNow}
+              disabled={!product.inStock}
+            >
+              Buy Now
             </Button>
           </div>
 
@@ -282,6 +309,15 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal
+        open={showAuthModal}
+        onOpenChange={setShowAuthModal}
+        title="Login Required"
+        message="You need to be logged in to add items to your cart or make a purchase."
+        redirectPath={window.location.pathname}
+      />
     </div>
   )
 }

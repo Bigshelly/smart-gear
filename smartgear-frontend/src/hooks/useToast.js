@@ -71,5 +71,29 @@ export const toast = {
       globalToasts = globalToasts.filter(t => t.id !== id)
       globalSetToasts?.(globalToasts)
     }, 3300)
+  },
+  
+  error: (title, description) => {
+    const id = Date.now() + Math.random()
+    const toastObj = { id, title, description, variant: 'error', duration: 4000, show: true }
+    globalToasts = [...globalToasts, toastObj]
+    globalSetToasts?.(globalToasts)
+    
+    setTimeout(() => {
+      globalToasts = globalToasts.filter(t => t.id !== id)
+      globalSetToasts?.(globalToasts)
+    }, 4300)
+  },
+  
+  info: (title, description) => {
+    const id = Date.now() + Math.random()
+    const toastObj = { id, title, description, variant: 'info', duration: 3000, show: true }
+    globalToasts = [...globalToasts, toastObj]
+    globalSetToasts?.(globalToasts)
+    
+    setTimeout(() => {
+      globalToasts = globalToasts.filter(t => t.id !== id)
+      globalSetToasts?.(globalToasts)
+    }, 3300)
   }
 }

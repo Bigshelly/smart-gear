@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Smartphone } from 'lucide-react'
 import CartIcon from './CartIcon'
+import ProfileIcon from './ui/ProfileIcon'
 
 const Header = () => {
   return (
@@ -37,8 +38,9 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Cart Icon */}
-          <div className="flex items-center space-x-4">
+          {/* Profile and Cart Icons */}
+          <div className="flex items-center space-x-2">
+            <ProfileIcon />
             <CartIcon />
           </div>
         </div>

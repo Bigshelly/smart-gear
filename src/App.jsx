@@ -6,6 +6,8 @@ import Success from './pages/Success'
 import Error from './pages/Error'
 import Login from './pages/Login'
 import SignUp from './pages/Sigin-up'
+import Account from './pages/Account'
+
 import './App.css'
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
           <Route path="error" element={<Error />} />
           <Route path="login" element={<Login />} />
           <Route path="sign-up" element={<SignUp />} />
+          <Route path="account" element={<Account />} />
 
           {/* Catch all route for 404 */}
           <Route

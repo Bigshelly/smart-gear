@@ -4,7 +4,7 @@ import { ArrowLeft, ShieldCheck } from 'lucide-react'
 import CheckoutForm from '../components/CheckoutForm'
 import { Button } from '../components/ui/button'
 import { Alert, AlertDescription } from '../components/ui/alert'
-import { getProductById } from '../data/products'
+import { getProduct } from '../services/api'
 
 const Checkout = () => {
   const { productId } = useParams()
@@ -16,25 +16,25 @@ const Checkout = () => {
     const loadProduct = async () => {
       try {
         setLoading(true)
+        setError(null)
         
-        // Simulate API call delay
-        setTimeout(() => {
-          const foundProduct = getProductById(productId)
-          
-          if (foundProduct) {
-            if (foundProduct.inStock) {
-              setProduct(foundProduct)
-            } else {
-              setError('This product is currently out of stock.')
-            }
+        // Fetch product from API
+        const response = await getProduct(productId)
+        const foundProduct = response.data?.product || response.product || response
+        
+        if (foundProduct) {
+          if (foundProduct.inStock) {
+            setProduct(foundProduct)
           } else {
-            setError('Product not found.')
+            setError('This product is currently out of stock.')
           }
-          
-          setLoading(false)
-        }, 500)
+        } else {
+          setError('Product not found.')
+        }
       } catch (err) {
+        console.error('Failed to load product:', err)
         setError('Failed to load product details.')
+      } finally {
         setLoading(false)
       }
     }

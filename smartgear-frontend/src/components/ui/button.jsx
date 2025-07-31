@@ -44,4 +44,6 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
 })
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button }
+// eslint-disable-next-line react-refresh/only-export-components
+export { buttonVariants }

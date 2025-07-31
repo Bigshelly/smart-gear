@@ -16,6 +16,9 @@ const usePaystack = () => {
         email: paymentInfo.email,
         amount: paymentInfo.amount * 100, // Paystack expects amount in pesewas
         currency: paymentInfo.currency || 'GHS',
+        productId: paymentInfo.productId, // Required by backend validation
+        customerName: paymentInfo.customerName, // Required by backend validation
+        phone: paymentInfo.phone, // Required by backend validation
         reference: `smartgear_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         callback_url: `${window.location.origin}/success`,
         metadata: {

@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
+import { ShoppingCart, Check } from 'lucide-react'
 import { formatPrice } from '../lib/utils'
+import { useCart } from '../context/CartContext'
+import { toast } from '../hooks/useToast'
 
 const ProductCard = ({ product }) => {
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const { addItem } = useCart()
 
   const handleImageLoad = () => {
     setImageLoading(false)
@@ -16,6 +21,22 @@ const ProductCard = ({ product }) => {
   const handleImageError = () => {
     setImageLoading(false)
     setImageError(true)
+  }
+
+  const handleAddToCart = () => {
+    setIsAdding(true)
+    addItem(product)
+    
+    // Show success toast with slight delay to not interfere with cart bounce
+    setTimeout(() => {
+      toast.success(
+        "Added to cart!",
+        `${product.name} has been added to your cart`
+      )
+    }, 300)
+    
+    // Reset button state after animation
+    setTimeout(() => setIsAdding(false), 1200)
   }
 
   return (
@@ -89,12 +110,35 @@ const ProductCard = ({ product }) => {
         </div>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0">
-        <Button asChild className="w-full" size="lg">
-          <Link to={`/checkout/${product.id}`}>
-            Buy Now
-          </Link>
-        </Button>
+      <CardFooter className="p-4 pt-0 space-y-2">
+        <div className="flex gap-2 w-full">
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className={`flex-1 transition-all duration-300 ${
+              isAdding ? 'bg-green-500 border-green-500 text-white hover:bg-green-600' : ''
+            }`}
+            onClick={handleAddToCart}
+            disabled={!product.inStock || isAdding}
+          >
+            {isAdding ? (
+              <>
+                <Check className="h-4 w-4 mr-2 animate-pulse" />
+                Added!
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Add to Cart
+              </>
+            )}
+          </Button>
+          <Button asChild className="flex-1" size="lg" disabled={!product.inStock}>
+            <Link to={`/checkout/${product._id || product.id}`}>
+              Buy Now
+            </Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )

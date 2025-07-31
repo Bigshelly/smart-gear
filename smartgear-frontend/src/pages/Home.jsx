@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import ProductGrid from '../components/ProductGrid'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
-import { Smartphone, Laptop, Headphones, Tablet, Watch, Star } from 'lucide-react'
-import { products } from '../data/products'
+import { Smartphone, Laptop, Headphones, Tablet, Watch, Star, ShieldCheck } from 'lucide-react'
+import { getProducts } from '../services/api'
 
 const Home = () => {
-  const [filteredProducts, setFilteredProducts] = useState(products)
+  const [allProducts, setAllProducts] = useState([])
+  const [filteredProducts, setFilteredProducts] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const categories = [
     { id: 'all', name: 'All Products', icon: Star },
@@ -19,18 +21,47 @@ const Home = () => {
     { id: 'wearables', name: 'Wearables', icon: Watch },
   ]
 
+  // Fetch products from API on component mount
   useEffect(() => {
-    // Simulate loading
-    setLoading(true)
-    setTimeout(() => {
-      if (selectedCategory === 'all') {
-        setFilteredProducts(products)
-      } else {
-        setFilteredProducts(products.filter(product => product.category === selectedCategory))
+    const fetchProducts = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await getProducts()
+        
+        // Extract products from API response
+        console.log('API Response:', response)
+        const productsData = response.data?.products || response.products || []
+        
+        if (Array.isArray(productsData)) {
+          setAllProducts(productsData)
+          setFilteredProducts(productsData)
+        } else {
+          console.error('Products data is not an array:', productsData)
+          setAllProducts([])
+          setFilteredProducts([])
+        }
+      } catch (err) {
+        console.error('Failed to fetch products:', err)
+        setError('Failed to load products. Please try again later.')
+        setAllProducts([])
+        setFilteredProducts([])
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    }, 300)
-  }, [selectedCategory])
+    }
+
+    fetchProducts()
+  }, [])
+
+  // Filter products when category changes
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredProducts(allProducts)
+    } else {
+      setFilteredProducts(allProducts.filter(product => product.category === selectedCategory))
+    }
+  }, [selectedCategory, allProducts])
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId)
@@ -65,6 +96,19 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <p className="text-red-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Category Filter */}
       <section>
@@ -135,12 +179,7 @@ const Home = () => {
             
             <div className="space-y-4">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6 text-primary">
-                  <path d="M9 12l2 2 4-4"/>
-                  <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
-                  <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
-                  <path d="M3 12h6m6 0h6"/>
-                </svg>
+                <ShieldCheck className="h-6 w-6 text-primary" />
               </div>
               <h3 className="text-xl font-semibold">Secure Payments</h3>
               <p className="text-muted-foreground">

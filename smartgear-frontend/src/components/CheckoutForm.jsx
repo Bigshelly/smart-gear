@@ -74,7 +74,7 @@ const CheckoutForm = ({ product }) => {
       currency: product.currency,
       customerName: formData.fullName.trim(),
       phone: formatPhoneNumber(formData.phone.trim()),
-      productId: product.id,
+      productId: product._id || product.id,
       productName: product.name,
     }
 

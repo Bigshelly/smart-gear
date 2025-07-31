@@ -67,14 +67,14 @@ const ProductGrid = ({
     return <ProductGridSkeleton />
   }
 
-  if (displayProducts.length === 0) {
+  if (!Array.isArray(displayProducts) || displayProducts.length === 0) {
     return <EmptyState />
   }
 
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${className}`}>
       {displayProducts.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product._id || product.id} product={product} />
       ))}
     </div>
   )

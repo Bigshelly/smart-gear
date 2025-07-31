@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ShoppingCart, Smartphone } from 'lucide-react'
-import { Button } from './ui/button'
+import { Smartphone } from 'lucide-react'
+import CartIcon from './CartIcon'
 
 const Header = () => {
   return (
@@ -39,14 +39,7 @@ const Header = () => {
 
           {/* Cart Icon */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">Shopping cart</span>
-              {/* Cart badge - static for now */}
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            <CartIcon />
           </div>
         </div>
 

@@ -6,7 +6,7 @@ import usePaystack from '../hooks/usePaystack'
 const Success = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { verifyPayment, loading } = usePaystack()
+  const { verifyPayment } = usePaystack()
   const [paymentStatus, setPaymentStatus] = useState('loading')
   const [paymentDetails, setPaymentDetails] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')

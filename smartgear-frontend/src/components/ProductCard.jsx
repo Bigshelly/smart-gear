@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { formatPrice } from '../lib/utils'
+import Spinner from './ui/spinner'
 
 // product card component - works but messy
 const ProductCard = ({ product }) => {
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
           <div className="relative overflow-hidden rounded-t-lg">
             {imageLoading && (
               <div className="aspect-square bg-muted animate-pulse flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <Spinner size="lg" />
               </div>
             )}
             {imageError ? (

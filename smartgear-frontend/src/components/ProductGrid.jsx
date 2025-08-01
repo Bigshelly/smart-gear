@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
 import { products as mockProducts } from '../data/products'
+import Spinner from './ui/spinner'
 
 const ProductGridSkeleton = () => {
   return (
@@ -20,6 +21,15 @@ const ProductGridSkeleton = () => {
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+const LoadingSpinner = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 space-y-4">
+      <Spinner size="xl" />
+      <p className="text-muted-foreground font-medium">Loading products...</p>
     </div>
   )
 }
@@ -46,24 +56,25 @@ const ProductGrid = ({
   products = null,
   className = ""
 }) => {
-  const [loading, setLoading] = useState(showLoading)
   const [displayProducts, setDisplayProducts] = useState([])
 
   useEffect(() => {
     if (products !== null) {
       setDisplayProducts(products)
-      setLoading(false)
     } else {
-      // Simulate loading with mock data
-      setLoading(true)
-      setTimeout(() => {
-        setDisplayProducts(mockProducts)
-        setLoading(false)
-      }, 1000)
+      // Fallback to mock data if no products provided
+      setDisplayProducts(mockProducts)
     }
   }, [products])
 
+  // Use external loading state if provided, otherwise show loading for mock data
+  const loading = showLoading || (products === null && displayProducts.length === 0)
+
   if (loading) {
+    // Show centered spinner for initial loading, skeleton for subsequent loads
+    if (showLoading) {
+      return <LoadingSpinner />
+    }
     return <ProductGridSkeleton />
   }
 

@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '../components/ui/alert'
 import { getProduct } from '../services/api'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import Spinner from '../components/ui/spinner'
 
 const Checkout = () => {
   const { productId } = useParams()
@@ -83,57 +84,9 @@ const Checkout = () => {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto">
-        {/* Header Skeleton */}
-        <div className="mb-8">
-          <div className="h-4 bg-muted rounded w-24 mb-4 animate-pulse"></div>
-          <div className="h-8 bg-muted rounded w-48 animate-pulse"></div>
-        </div>
-
-        {/* Content Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="bg-card border rounded-lg p-6">
-              <div className="h-6 bg-muted rounded w-32 mb-4 animate-pulse"></div>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-muted rounded animate-pulse"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded animate-pulse"></div>
-                  <div className="h-3 bg-muted rounded w-20 animate-pulse"></div>
-                  <div className="h-5 bg-muted rounded w-24 animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-card border rounded-lg p-6">
-              <div className="h-6 bg-muted rounded w-40 mb-4 animate-pulse"></div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="h-4 bg-muted rounded w-20 animate-pulse"></div>
-                  <div className="h-10 bg-muted rounded animate-pulse"></div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-muted rounded w-24 animate-pulse"></div>
-                  <div className="h-10 bg-muted rounded animate-pulse"></div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-muted rounded w-28 animate-pulse"></div>
-                  <div className="h-10 bg-muted rounded animate-pulse"></div>
-                </div>
-                <div className="h-12 bg-muted rounded animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-muted/30 p-6 rounded-lg">
-              <div className="h-6 bg-muted rounded w-32 mb-4 animate-pulse"></div>
-              <div className="space-y-3">
-                <div className="h-3 bg-muted rounded animate-pulse"></div>
-                <div className="h-3 bg-muted rounded animate-pulse"></div>
-                <div className="h-3 bg-muted rounded animate-pulse"></div>
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+          <Spinner size="xl" />
+          <p className="text-muted-foreground font-medium">Loading checkout...</p>
         </div>
       </div>
     )

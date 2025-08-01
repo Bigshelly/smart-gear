@@ -133,9 +133,10 @@ const Home = () => {
                 variant={isActive ? 'default' : 'outline'}
                 size="lg"
                 onClick={() => handleCategoryChange(category.id)}
+                disabled={loading}
                 className={`flex items-center gap-2 px-6 py-3 rounded-full ${
                   isActive ? '' : 'hover:bg-primary/10'
-                }`}
+                } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <IconComponent className="h-4 w-4" />
                 {category.name}

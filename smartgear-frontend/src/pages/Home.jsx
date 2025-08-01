@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Smartphone, Laptop, Headphones, Tablet, Watch, Star, ShieldCheck } from 'lucide-react'
 import { getProducts } from '../services/api'
+import heroImage from '../assets/hero-image.jpg'
 
 // home page - finally got it working lol
 const Home = () => {
@@ -71,12 +72,18 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* hero section */}
-      <section className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-background py-20">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">
+      <section 
+        className="relative py-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50"></div>
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
             Next-Gen Tech at Your Fingertips
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             Power Up Your Life with Cutting-Edge Tech
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -90,7 +97,7 @@ const Home = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="px-8 py-3 text-lg"
+              className="px-8 py-3 text-lg bg-white/10 border-white/20 text-white hover:bg-white/20"
               onClick={() => document.getElementById('why-choose-us').scrollIntoView({ behavior: 'smooth' })}
             >
               Why Shop With Us?

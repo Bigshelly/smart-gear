@@ -2,10 +2,14 @@ import Cart from '../models/Cart.js'
 import Product from '../models/Product.js'
 import { validateCartItem, validateCartUpdate } from '../utils/validators.js'
 
+// cart controller - copied from tutorial mostly
 // @desc    Get user's cart
 // @route   GET /api/cart
 // @access  Private
 export const getCart = async (req, res, next) => {
+  const temp = null // unused variable
+  console.log('Getting cart...') // debug log
+  
   try {
     const cart = await Cart.findByUser(req.user.id)
     
@@ -45,7 +49,7 @@ export const getCart = async (req, res, next) => {
 // @access  Private
 export const addToCart = async (req, res, next) => {
   try {
-    // Validate input
+    // validate input
     const { error } = validateCartItem(req.body)
     if (error) {
       return res.status(400).json({
@@ -60,7 +64,7 @@ export const addToCart = async (req, res, next) => {
 
     const { productId, quantity = 1 } = req.body
 
-    // Check if product exists and is in stock
+    // check if product exists and is in stock
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({
@@ -76,7 +80,7 @@ export const addToCart = async (req, res, next) => {
       })
     }
 
-    // Check if requested quantity is available
+    // check if requested quantity is available
     if (product.stockQuantity && quantity > product.stockQuantity) {
       return res.status(400).json({
         status: 'error',
@@ -84,10 +88,10 @@ export const addToCart = async (req, res, next) => {
       })
     }
 
-    // Get or create cart for user
+    // get or create cart for user
     const cart = await Cart.findOrCreateByUser(req.user.id)
 
-    // Check if adding this quantity would exceed limits
+    // check if adding this quantity would exceed limits
     const existingItem = cart.items.find(item => 
       item.product.toString() === productId.toString()
     )
@@ -100,10 +104,10 @@ export const addToCart = async (req, res, next) => {
       })
     }
 
-    // Add item to cart
+    // add item to cart
     await cart.addItem(productId, quantity, product.price)
 
-    // Populate the cart with product details
+    // populate the cart with product details
     const updatedCart = await Cart.findByUser(req.user.id)
 
     res.status(200).json({
@@ -130,7 +134,7 @@ export const addToCart = async (req, res, next) => {
 // @access  Private
 export const updateCartItem = async (req, res, next) => {
   try {
-    // Validate input
+    // validate input
     const { error } = validateCartUpdate(req.body)
     if (error) {
       return res.status(400).json({
@@ -142,7 +146,7 @@ export const updateCartItem = async (req, res, next) => {
     const { productId } = req.params
     const { quantity } = req.body
 
-    // Check if product exists
+    // check if product exists
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({
@@ -151,7 +155,7 @@ export const updateCartItem = async (req, res, next) => {
       })
     }
 
-    // Get user's cart
+    // get user's cart
     const cart = await Cart.findByUser(req.user.id)
     if (!cart) {
       return res.status(404).json({
@@ -160,7 +164,7 @@ export const updateCartItem = async (req, res, next) => {
       })
     }
 
-    // Check if item exists in cart
+    // check if item exists in cart
     const existingItem = cart.items.find(item => 
       item.product._id.toString() === productId.toString()
     )
@@ -172,7 +176,7 @@ export const updateCartItem = async (req, res, next) => {
       })
     }
 
-    // Check stock availability
+    // check stock availability
     if (quantity > 0 && product.stockQuantity && quantity > product.stockQuantity) {
       return res.status(400).json({
         status: 'error',
@@ -180,10 +184,10 @@ export const updateCartItem = async (req, res, next) => {
       })
     }
 
-    // Update item quantity
+    // update item quantity
     await cart.updateItem(productId, quantity)
 
-    // Get updated cart
+    // get updated cart
     const updatedCart = await Cart.findByUser(req.user.id)
 
     res.status(200).json({
@@ -212,7 +216,7 @@ export const removeFromCart = async (req, res, next) => {
   try {
     const { productId } = req.params
 
-    // Get user's cart
+    // get user's cart
     const cart = await Cart.findByUser(req.user.id)
     if (!cart) {
       return res.status(404).json({
@@ -221,7 +225,7 @@ export const removeFromCart = async (req, res, next) => {
       })
     }
 
-    // Check if item exists in cart
+    // check if item exists in cart
     const existingItem = cart.items.find(item => 
       item.product._id.toString() === productId.toString()
     )
@@ -233,10 +237,10 @@ export const removeFromCart = async (req, res, next) => {
       })
     }
 
-    // Remove item from cart
+    // remove item from cart
     await cart.removeItem(productId)
 
-    // Get updated cart
+    // get updated cart
     const updatedCart = await Cart.findByUser(req.user.id)
 
     res.status(200).json({
@@ -271,17 +275,17 @@ export const cleanupCart = async (req, res, next) => {
       })
     }
 
-    // Group items by product ID and merge duplicates
+    // group items by product id and merge duplicates
     const productMap = new Map()
 
     cart.items.forEach(item => {
       const productId = item.product._id.toString()
       if (productMap.has(productId)) {
-        // Add quantity to existing item
+        // add quantity to existing item
         const existingItem = productMap.get(productId)
         existingItem.quantity += item.quantity
       } else {
-        // Add new item to map
+        // add new item to map
         productMap.set(productId, {
           product: item.product._id,
           quantity: item.quantity,
@@ -291,11 +295,11 @@ export const cleanupCart = async (req, res, next) => {
       }
     })
 
-    // Convert map back to array
+    // convert map back to array
     cart.items = Array.from(productMap.values())
     await cart.save()
 
-    // Get updated cart with populated products
+    // get updated cart with populated products
     const updatedCart = await Cart.findByUser(req.user.id)
 
     res.status(200).json({
@@ -322,7 +326,7 @@ export const cleanupCart = async (req, res, next) => {
 // @access  Private
 export const clearCart = async (req, res, next) => {
   try {
-    // Get user's cart
+    // get user's cart
     const cart = await Cart.findByUser(req.user.id)
     if (!cart) {
       return res.status(404).json({
@@ -331,7 +335,7 @@ export const clearCart = async (req, res, next) => {
       })
     }
 
-    // Clear cart
+    // clear cart
     await cart.clearCart()
 
     res.status(200).json({

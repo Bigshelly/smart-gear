@@ -1,6 +1,7 @@
 import Joi from 'joi'
 
-// Product validation schema
+// validators - copied from docs mostly
+// product validation schema
 export const validateProduct = (product) => {
   const schema = Joi.object({
     name: Joi.string()
@@ -89,7 +90,7 @@ export const validateProduct = (product) => {
   return schema.validate(product, { abortEarly: false })
 }
 
-// Customer details validation for checkout
+// customer details validation for checkout
 export const validateCustomerDetails = (customer) => {
   const schema = Joi.object({
     fullName: Joi.string()
@@ -123,7 +124,7 @@ export const validateCustomerDetails = (customer) => {
   return schema.validate(customer, { abortEarly: false })
 }
 
-// Payment initialization validation
+// payment initialization validation
 export const validatePaymentInit = (payment) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -153,7 +154,7 @@ export const validatePaymentInit = (payment) => {
   return schema.validate(payment, { abortEarly: false })
 }
 
-// User registration validation
+// user registration validation
 export const validateUserRegistration = (user) => {
   const schema = Joi.object({
     fullName: Joi.string()
@@ -205,7 +206,7 @@ export const validateUserRegistration = (user) => {
   return schema.validate(user, { abortEarly: false })
 }
 
-// User login validation
+// user login validation
 export const validateUserLogin = (user) => {
   const schema = Joi.object({
     email: Joi.string()
@@ -226,7 +227,7 @@ export const validateUserLogin = (user) => {
   return schema.validate(user, { abortEarly: false })
 }
 
-// Password change validation
+// password change validation
 export const validatePasswordChange = (data) => {
   const schema = Joi.object({
     currentPassword: Joi.string()
@@ -257,7 +258,7 @@ export const validatePasswordChange = (data) => {
   return schema.validate(data, { abortEarly: false })
 }
 
-// Cart item validation
+// cart item validation
 export const validateCartItem = (item) => {
   const schema = Joi.object({
     productId: Joi.string()
@@ -282,7 +283,7 @@ export const validateCartItem = (item) => {
   return schema.validate(item, { abortEarly: false })
 }
 
-// Cart update validation
+// cart update validation
 export const validateCartUpdate = (data) => {
   const schema = Joi.object({
     quantity: Joi.number()

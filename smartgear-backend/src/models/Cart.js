@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+// cart model - copied from tutorial mostly
 const cartItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +29,7 @@ const cartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true // One cart per user
+    unique: true // one cart per user
   },
   items: [cartItemSchema],
   totalAmount: {
@@ -53,7 +54,7 @@ const cartSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// Calculate totals before saving
+// calculate totals before saving
 cartSchema.pre('save', function(next) {
   if (this.items && this.items.length > 0) {
     this.totalAmount = this.items.reduce((total, item) => total + (item.price * item.quantity), 0)
@@ -66,7 +67,7 @@ cartSchema.pre('save', function(next) {
   next()
 })
 
-// Instance method to add item to cart
+// instance method to add item to cart
 cartSchema.methods.addItem = function(productId, quantity, price) {
   const existingItemIndex = this.items.findIndex(item => {
     const itemProductId = item.product._id ? item.product._id.toString() : item.product.toString()
@@ -74,11 +75,11 @@ cartSchema.methods.addItem = function(productId, quantity, price) {
   })
 
   if (existingItemIndex >= 0) {
-    // Update existing item quantity
+    // update existing item quantity
     this.items[existingItemIndex].quantity += quantity
-    this.items[existingItemIndex].price = price // Update price in case it changed
+    this.items[existingItemIndex].price = price // update price in case it changed
   } else {
-    // Add new item
+    // add new item
     this.items.push({
       product: productId,
       quantity,
@@ -90,7 +91,7 @@ cartSchema.methods.addItem = function(productId, quantity, price) {
   return this.save()
 }
 
-// Instance method to update item quantity
+// instance method to update item quantity
 cartSchema.methods.updateItem = function(productId, quantity) {
   const existingItemIndex = this.items.findIndex(item => {
     const itemProductId = item.product._id ? item.product._id.toString() : item.product.toString()
@@ -99,10 +100,10 @@ cartSchema.methods.updateItem = function(productId, quantity) {
 
   if (existingItemIndex >= 0) {
     if (quantity <= 0) {
-      // Remove item if quantity is 0 or less
+      // remove item if quantity is 0 or less
       this.items.splice(existingItemIndex, 1)
     } else {
-      // Update quantity
+      // update quantity
       this.items[existingItemIndex].quantity = quantity
     }
     return this.save()
@@ -111,10 +112,10 @@ cartSchema.methods.updateItem = function(productId, quantity) {
   }
 }
 
-// Instance method to remove item from cart
+// instance method to remove item from cart
 cartSchema.methods.removeItem = function(productId) {
   this.items = this.items.filter(item => {
-    // Handle both ObjectId reference and populated product object
+    // handle both objectid reference and populated product object
     const itemProductId = item.product._id ? item.product._id.toString() : item.product.toString()
     const targetProductId = productId.toString()
     return itemProductId !== targetProductId
@@ -123,7 +124,7 @@ cartSchema.methods.removeItem = function(productId) {
   return this.save()
 }
 
-// Instance method to clear cart
+// instance method to clear cart
 cartSchema.methods.clearCart = function() {
   this.items = []
   this.totalAmount = 0
@@ -131,12 +132,12 @@ cartSchema.methods.clearCart = function() {
   return this.save()
 }
 
-// Static method to find cart by user
+// static method to find cart by user
 cartSchema.statics.findByUser = function(userId) {
   return this.findOne({ user: userId, isActive: true }).populate('items.product')
 }
 
-// Static method to create or get cart for user
+// static method to create or get cart for user
 cartSchema.statics.findOrCreateByUser = async function(userId) {
   let cart = await this.findByUser(userId)
   

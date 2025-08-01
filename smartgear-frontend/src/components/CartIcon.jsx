@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { Badge } from './ui/badge'
 
+// cart icon with animation - this was annoying to debug
 const CartIcon = () => {
   try {
     const { getItemCount, toggleDrawer } = useCart()
@@ -10,7 +11,7 @@ const CartIcon = () => {
     const [justAdded, setJustAdded] = useState(false)
     const [prevItemCount, setPrevItemCount] = useState(0)
 
-    // Trigger animation when item count increases
+    // animation trigger
     useEffect(() => {
       if (itemCount > prevItemCount && itemCount > 0) {
         setJustAdded(true)
@@ -52,7 +53,7 @@ const CartIcon = () => {
     )
   } catch (error) {
     console.error('CartIcon error:', error)
-    // Fallback UI when cart context is not available
+    // fallback ui
     return (
       <div className="relative z-50">
         <button 

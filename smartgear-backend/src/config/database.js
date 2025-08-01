@@ -28,6 +28,10 @@ export const connectDB = async () => {
 
   } catch (error) {
     console.error('❌ Database connection failed:', error.message)
-    process.exit(1)
+    console.error('⚠️  Server will continue running but database features will be unavailable')
+    // Don't exit in production to allow health checks
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1)
+    }
   }
 }

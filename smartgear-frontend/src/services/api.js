@@ -2,21 +2,22 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// api config - found this online
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true', // Skip ngrok browser warning
+    'ngrok-skip-browser-warning': 'true', // skip ngrok browser warning
   },
   timeout: 10000, // 10 seconds timeout
 });
 
-// Request interceptor for debugging and auth
+// request interceptor for debugging and auth
 api.interceptors.request.use(
   (config) => {
     console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
     
-    // Add auth token to requests
+    // add auth token to requests
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -30,7 +31,7 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
+// response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -39,7 +40,7 @@ api.interceptors.response.use(
   }
 );
 
-// API functions
+// api functions
 export const getProducts = async () => {
   try {
     const response = await api.get('/api/products');
@@ -80,7 +81,7 @@ export const verifyPayment = async (reference) => {
   }
 };
 
-// Authentication API functions
+// auth api functions
 export const register = async (userData) => {
   try {
     const response = await api.post('/api/auth/register', userData);
@@ -168,7 +169,7 @@ export const refreshToken = async () => {
   }
 };
 
-// Cart API functions
+// cart api functions
 export const getCart = async () => {
   try {
     const response = await api.get('/api/cart');
@@ -235,6 +236,47 @@ export const getCartCount = async () => {
     return response.data;
   } catch (error) {
     console.error('Error getting cart count:', error);
+    throw error;
+  }
+};
+
+// order endpoints
+export const createOrder = async (orderData) => {
+  try {
+    const response = await api.post('/api/orders', orderData);
+    return response.data;
+  } catch (error) {
+    console.error('Create order error:', error);
+    throw error;
+  }
+};
+
+export const getUserOrders = async (params = {}) => {
+  try {
+    const response = await api.get('/api/orders', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Get user orders error:', error);
+    throw error;
+  }
+};
+
+export const getOrder = async (orderId) => {
+  try {
+    const response = await api.get(`/api/orders/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Get order error:', error);
+    throw error;
+  }
+};
+
+export const getUserOrderStats = async () => {
+  try {
+    const response = await api.get('/api/orders/stats');
+    return response.data;
+  } catch (error) {
+    console.error('Get user order stats error:', error);
     throw error;
   }
 };

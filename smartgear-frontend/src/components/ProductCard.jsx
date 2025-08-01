@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Badge } from './ui/badge'
 import { formatPrice } from '../lib/utils'
 
+// product card component - works but messy
 const ProductCard = ({ product }) => {
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
@@ -64,7 +65,7 @@ const ProductCard = ({ product }) => {
             {product.description}
           </CardDescription>
           
-          {/* Specs */}
+          {/* specs */}
           {product.specs && product.specs.length > 0 && (
             <div className="mb-3">
               <p className="text-xs font-medium text-muted-foreground mb-1">Key Features:</p>

@@ -5,26 +5,28 @@ import dotenv from 'dotenv'
 import { connectDB } from './src/config/database.js'
 import { errorHandler } from './src/middleware/errorHandler.js'
 
-// Import routes
+// import routes
 import productRoutes from './src/routes/products.js'
 import paymentRoutes from './src/routes/payments.js'
 import authRoutes from './src/routes/auth.js'
 import cartRoutes from './src/routes/cart.js'
+import orderRoutes from './src/routes/orders.js'
 
-// Load environment variables
+// load env vars
 dotenv.config()
 
+// main server - this took forever to get right
 const app = express()
 const PORT = process.env.PORT || 5000
 
-// Connect to database
+// connect to db
 connectDB()
 
-// Middleware
+// middleware
 app.use(helmet())
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true)
     
     const allowedOrigins = [
@@ -35,14 +37,14 @@ app.use(cors({
       process.env.FRONTEND_URL
     ].filter(Boolean)
     
-    // Remove trailing slashes and check
+    // remove trailing slashes and check
     const normalizedOrigin = origin.replace(/\/$/, '')
     const isAllowed = allowedOrigins.some(allowedOrigin => {
       const normalizedAllowed = allowedOrigin.replace(/\/$/, '')
       return normalizedAllowed === normalizedOrigin
     })
     
-    // Also allow any Vercel preview/production domains for this project
+    // also allow any vercel preview/production domains for this project
     const isVercelDomain = origin.includes('vercel.app') && 
                           (origin.includes('smart-gear') || origin.includes('bigshellys-projects'))
     
@@ -64,13 +66,14 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
-// Routes
+// routes
 app.use('/api/products', productRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/cart', cartRoutes)
+app.use('/api/orders', orderRoutes)
 
-// Root endpoint
+// root endpoint
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -81,7 +84,7 @@ app.get('/', (req, res) => {
   })
 })
 
-// Health check endpoint
+// health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -91,7 +94,7 @@ app.get('/api/health', (req, res) => {
   })
 })
 
-// Basic health check without database dependency
+// basic health check without db dependency
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' })
 })
@@ -104,10 +107,10 @@ app.use('*', (req, res) => {
   })
 })
 
-// Global error handler
+// global error handler
 app.use(errorHandler)
 
-// Start server
+// start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SmartGear API server running on port ${PORT}`)
   console.log(`🔧 PORT from env: ${process.env.PORT || 'undefined'}`)

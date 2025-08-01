@@ -10,9 +10,10 @@ import {
 } from '../controllers/cartController.js'
 import { protect } from '../middleware/auth.js'
 
+// cart routes - works but messy
 const router = express.Router()
 
-// All cart routes require authentication
+// all cart routes require authentication
 router.use(protect)
 
 // @route   GET /api/cart

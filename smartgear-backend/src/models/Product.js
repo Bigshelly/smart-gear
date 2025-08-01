@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+// product model - found this online
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -76,14 +77,14 @@ const productSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 })
 
-// Indexes for better query performance
+// indexes for better query performance
 productSchema.index({ category: 1 })
 productSchema.index({ price: 1 })
 productSchema.index({ inStock: 1 })
 productSchema.index({ featured: 1 })
 productSchema.index({ name: 'text', description: 'text' })
 
-// Virtual for formatted price
+// virtual for formatted price
 productSchema.virtual('formattedPrice').get(function() {
   return `${this.currency} ${this.price.toLocaleString('en-US', { 
     minimumFractionDigits: 2, 
@@ -91,7 +92,7 @@ productSchema.virtual('formattedPrice').get(function() {
   })}`
 })
 
-// Update inStock based on stockQuantity
+// update instock based on stockquantity
 productSchema.pre('save', function(next) {
   if (this.stockQuantity <= 0) {
     this.inStock = false

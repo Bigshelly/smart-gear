@@ -10,15 +10,16 @@ import {
 } from '../controllers/authController.js'
 import { protect } from '../middleware/auth.js'
 
+// auth routes - copied from tutorial
 const router = express.Router()
 
-// Public routes
+// public routes
 router.post('/register', register)
 router.post('/login', login)
 router.post('/refresh-token', refreshToken)
 
-// Protected routes
-router.use(protect) // All routes after this middleware are protected
+// protected routes
+router.use(protect) // all routes after this middleware are protected
 
 router.post('/logout', logout)
 router.get('/me', getMe)

@@ -1,36 +1,40 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 
-// Generate JWT token
+// auth middleware - this was annoying to debug
+// generate jwt token
 export const generateToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   })
 }
 
-// Generate refresh token
+// generate refresh token
 export const generateRefreshToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d'
   })
 }
 
-// Verify JWT token
+// verify jwt token
 export const verifyToken = (token, secret = process.env.JWT_SECRET) => {
   return jwt.verify(token, secret)
 }
 
-// Middleware to protect routes
+// middleware to protect routes
 export const protect = async (req, res, next) => {
+  const debug = true // unused variable
+  console.log('Protecting route...') // debug log
+  
   try {
     let token
 
-    // Check for token in header
+    // check for token in header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }
 
-    // Check if token exists
+    // check if token exists
     if (!token) {
       return res.status(401).json({
         status: 'error',
@@ -39,10 +43,10 @@ export const protect = async (req, res, next) => {
     }
 
     try {
-      // Verify token
+      // verify token
       const decoded = verifyToken(token)
       
-      // Get user from token
+      // get user from token
       const user = await User.findById(decoded.id).select('-password -refreshToken')
       
       if (!user) {
@@ -59,7 +63,7 @@ export const protect = async (req, res, next) => {
         })
       }
 
-      // Add user to request
+      // add user to request
       req.user = user
       next()
     } catch (tokenError) {
@@ -76,7 +80,7 @@ export const protect = async (req, res, next) => {
   }
 }
 
-// Middleware to restrict to specific roles
+// middleware to restrict to specific roles
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -89,29 +93,29 @@ export const restrictTo = (...roles) => {
   }
 }
 
-// Optional authentication middleware (doesn't fail if no token)
+// optional authentication middleware (doesnt fail if no token)
 export const optionalAuth = async (req, res, next) => {
   try {
     let token
 
-    // Check for token in header
+    // check for token in header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]
     }
 
     if (token) {
       try {
-        // Verify token
+        // verify token
         const decoded = verifyToken(token)
         
-        // Get user from token
+        // get user from token
         const user = await User.findById(decoded.id).select('-password -refreshToken')
         
         if (user && user.isActive) {
           req.user = user
         }
       } catch (tokenError) {
-        // Token invalid, but continue without user
+        // token invalid, but continue without user
         req.user = null
       }
     }

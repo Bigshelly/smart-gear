@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
+// user model - found this online
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters'],
-    select: false // Don't include password in queries by default
+    select: false // dont include password in queries by default
   },
   phone: {
     type: String,
@@ -48,22 +49,22 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// Hash password before saving
+// hash password before saving
 userSchema.pre('save', async function(next) {
-  // Only hash the password if it has been modified (or is new)
+  // only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) return next()
 
-  // Hash password with cost of 12
+  // hash password with cost of 12
   this.password = await bcrypt.hash(this.password, 12)
   next()
 })
 
-// Instance method to check password
+// instance method to check password
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password)
 }
 
-// Instance method to generate JWT payload
+// instance method to generate jwt payload
 userSchema.methods.getJWTPayload = function() {
   return {
     id: this._id,
@@ -73,7 +74,7 @@ userSchema.methods.getJWTPayload = function() {
   }
 }
 
-// Static method to find user by email with password
+// static method to find user by email with password
 userSchema.statics.findByEmailWithPassword = function(email) {
   return this.findOne({ email, isActive: true }).select('+password')
 }

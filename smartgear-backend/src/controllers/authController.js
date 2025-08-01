@@ -6,12 +6,16 @@ import {
   validatePasswordChange 
 } from '../utils/validators.js'
 
+// auth controller - this was annoying to debug
 // @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
 export const register = async (req, res, next) => {
+  const debug = true // unused variable
+  console.log('Registering user...') // debug log
+  
   try {
-    // Validate input
+    // validate input
     const { error } = validateUserRegistration(req.body)
     if (error) {
       return res.status(400).json({
@@ -26,7 +30,7 @@ export const register = async (req, res, next) => {
 
     const { fullName, email, password, phone } = req.body
 
-    // Check if user already exists
+    // check if user already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
       return res.status(400).json({
@@ -35,7 +39,7 @@ export const register = async (req, res, next) => {
       })
     }
 
-    // Create user
+    // create user
     const user = await User.create({
       fullName,
       email,
@@ -43,16 +47,16 @@ export const register = async (req, res, next) => {
       phone
     })
 
-    // Generate tokens
+    // generate tokens
     const tokenPayload = user.getJWTPayload()
     const accessToken = generateToken(tokenPayload)
     const refreshToken = generateRefreshToken(tokenPayload)
 
-    // Save refresh token to user
+    // save refresh token to user
     user.refreshToken = refreshToken
     await user.save()
 
-    // Remove password from response
+    // remove password from response
     const userResponse = user.toObject()
     delete userResponse.password
     delete userResponse.refreshToken
@@ -77,7 +81,7 @@ export const register = async (req, res, next) => {
 // @access  Public
 export const login = async (req, res, next) => {
   try {
-    // Validate input
+    // validate input
     const { error } = validateUserLogin(req.body)
     if (error) {
       return res.status(400).json({
@@ -88,7 +92,7 @@ export const login = async (req, res, next) => {
 
     const { email, password } = req.body
 
-    // Find user with password
+    // find user with password
     const user = await User.findByEmailWithPassword(email)
     if (!user) {
       return res.status(401).json({
@@ -97,7 +101,7 @@ export const login = async (req, res, next) => {
       })
     }
 
-    // Check password
+    // check password
     const isPasswordValid = await user.comparePassword(password)
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -106,19 +110,19 @@ export const login = async (req, res, next) => {
       })
     }
 
-    // Update last login
+    // update last login
     user.lastLogin = new Date()
 
-    // Generate tokens
+    // generate tokens
     const tokenPayload = user.getJWTPayload()
     const accessToken = generateToken(tokenPayload)
     const refreshToken = generateRefreshToken(tokenPayload)
 
-    // Save refresh token
+    // save refresh token
     user.refreshToken = refreshToken
     await user.save()
 
-    // Remove sensitive data from response
+    // remove sensitive data from response
     const userResponse = user.toObject()
     delete userResponse.password
     delete userResponse.refreshToken
@@ -143,7 +147,7 @@ export const login = async (req, res, next) => {
 // @access  Private
 export const logout = async (req, res, next) => {
   try {
-    // Clear refresh token
+    // clear refresh token
     await User.findByIdAndUpdate(req.user.id, { 
       $unset: { refreshToken: 1 } 
     })
@@ -184,7 +188,7 @@ export const updateProfile = async (req, res, next) => {
   try {
     const { fullName, phone } = req.body
 
-    // Create update object
+    // create update object
     const updateData = {}
     if (fullName) updateData.fullName = fullName
     if (phone) updateData.phone = phone
@@ -216,7 +220,7 @@ export const updateProfile = async (req, res, next) => {
 // @access  Private
 export const changePassword = async (req, res, next) => {
   try {
-    // Validate input
+    // validate input
     const { error } = validatePasswordChange(req.body)
     if (error) {
       return res.status(400).json({
@@ -227,10 +231,10 @@ export const changePassword = async (req, res, next) => {
 
     const { currentPassword, newPassword } = req.body
 
-    // Get user with password
+    // get user with password
     const user = await User.findById(req.user.id).select('+password')
     
-    // Check current password
+    // check current password
     const isCurrentPasswordValid = await user.comparePassword(currentPassword)
     if (!isCurrentPasswordValid) {
       return res.status(400).json({
@@ -239,7 +243,7 @@ export const changePassword = async (req, res, next) => {
       })
     }
 
-    // Update password
+    // update password
     user.password = newPassword
     await user.save()
 
@@ -268,10 +272,10 @@ export const refreshToken = async (req, res, next) => {
     }
 
     try {
-      // Verify refresh token
+      // verify refresh token
       const decoded = verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET)
       
-      // Find user with this refresh token
+      // find user with this refresh token
       const user = await User.findOne({ 
         _id: decoded.id, 
         refreshToken: refreshToken,
@@ -285,12 +289,12 @@ export const refreshToken = async (req, res, next) => {
         })
       }
 
-      // Generate new tokens
+      // generate new tokens
       const tokenPayload = user.getJWTPayload()
       const newAccessToken = generateToken(tokenPayload)
       const newRefreshToken = generateRefreshToken(tokenPayload)
 
-      // Update refresh token
+      // update refresh token
       user.refreshToken = newRefreshToken
       await user.save()
 

@@ -14,13 +14,14 @@ export const useCart = () => {
   return context
 }
 
+// cart context - copied from tutorial mostly
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const { isAuthenticated, user } = useAuth()
 
-  // Clean up cart duplicates
+  // cleanup cart duplicates
   const cleanupCart = async () => {
     if (!isAuthenticated) return
     
@@ -35,7 +36,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // Load cart from backend
+  // load cart from backend
   const loadCart = async () => {
     if (!isAuthenticated) {
       setCartItems([])
@@ -48,14 +49,14 @@ export const CartProvider = ({ children }) => {
       const backendCart = response.data?.cart
       
       if (backendCart && backendCart.items) {
-        // Check for duplicates and clean if found
+        // check for duplicates and clean if found
         const productIds = backendCart.items.map(item => item.product._id)
         const uniqueProductIds = [...new Set(productIds)]
         
         if (productIds.length !== uniqueProductIds.length) {
           console.log('Duplicates detected, cleaning up cart...')
           await cleanupCart()
-          // Reload cart after cleanup
+          // reload cart after cleanup
           const cleanedResponse = await cartAPI.getCart()
           const cleanedCart = cleanedResponse.data?.cart
           
@@ -72,7 +73,7 @@ export const CartProvider = ({ children }) => {
             setCartItems([])
           }
         } else {
-          // No duplicates, proceed normally
+          // no duplicates, proceed normally
           const transformedItems = backendCart.items.map((item, index) => ({
             ...item.product,
             quantity: item.quantity,
@@ -93,7 +94,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // Load cart when user authentication changes
+  // load cart when user auth changes
   useEffect(() => {
     loadCart()
   }, [isAuthenticated, user])
@@ -110,9 +111,9 @@ export const CartProvider = ({ children }) => {
       const response = await cartAPI.addToCart(productId, 1)
       
       if (response.status === 'success') {
-        // Reload cart to get updated data
+        // reload cart to get updated data
         await loadCart()
-        // Don't show toast for add to cart, it's handled elsewhere
+        // dont show toast for add to cart, handled elsewhere
       }
     } catch (error) {
       console.error('Error adding to cart:', error)
@@ -138,10 +139,10 @@ export const CartProvider = ({ children }) => {
       console.log('Remove item response:', response)
       
       if (response.status === 'success') {
-        // Immediately update local state for better UX
+        // immediately update local state for better ux
         setCartItems(prev => prev.filter(item => (item._id || item.id) !== productId))
         
-        // Then reload from backend to ensure consistency
+        // then reload from backend to ensure consistency
         setTimeout(async () => {
           const reloadResponse = await cartAPI.getCart()
           console.log('Reloaded cart after removal:', reloadResponse.data?.cart?.items?.map(item => ({ id: item.product._id, name: item.product.name })))
@@ -154,7 +155,7 @@ export const CartProvider = ({ children }) => {
       console.error('Error removing from cart:', error)
       const message = error.response?.data?.message || 'Failed to remove item from cart'
       toast.error('Error', message)
-      // Reload cart to get correct state on error
+      // reload cart to get correct state on error
       await loadCart()
     } finally {
       setLoading(false)
@@ -184,7 +185,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // Drawer management functions
+  // drawer management functions
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
   const toggleDrawer = () => setIsDrawerOpen(prev => !prev)

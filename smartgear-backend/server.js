@@ -2,8 +2,10 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import dotenv from 'dotenv'
+import swaggerUi from 'swagger-ui-express'
 import { connectDB } from './src/config/database.js'
 import { errorHandler } from './src/middleware/errorHandler.js'
+import { specs } from './src/config/swagger.js'
 
 // import routes
 import productRoutes from './src/routes/products.js'
@@ -65,6 +67,13 @@ app.use(cors({
 }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'SmartGear API Documentation',
+  customfavIcon: '/favicon.ico'
+}))
 
 // routes
 app.use('/api/products', productRoutes)

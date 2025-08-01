@@ -10,12 +10,12 @@ SmartGear is a comprehensive e-commerce platform API that provides endpoints for
 
 The API documentation is available through Swagger UI at:
 - **Development**: `http://localhost:5000/api-docs`
-- **Production**: `https://your-production-domain.com/api-docs`
+- **Production**: `https://railway.com/api-docs`
 
 ### Base URL
 
 - **Development**: `http://localhost:5000/api`
-- **Production**: `https://your-production-domain.com/api`
+- **Production**: `https://smart-gear-production.up.railway.app/api-docs/`
 
 ## Authentication
 
@@ -314,8 +314,8 @@ For production, consider implementing rate limiting:
 import rateLimit from 'express-rate-limit'
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, 
+  max: 100 
 })
 
 app.use('/api/', limiter)

@@ -17,7 +17,7 @@ import orderRoutes from './src/routes/orders.js'
 // load env vars
 dotenv.config()
 
-// main server - this took forever to get right
+// main server
 const app = express()
 const PORT = process.env.PORT || 5000
 
@@ -28,7 +28,7 @@ connectDB()
 app.use(helmet())
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
+    // allow requests with no origin
     if (!origin) return callback(null, true)
     
     const allowedOrigins = [
@@ -121,11 +121,11 @@ app.use(errorHandler)
 
 // start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 SmartGear API server running on port ${PORT}`)
+  console.log(` SmartGear API server running on port ${PORT}`)
   console.log(`🔧 PORT from env: ${process.env.PORT || 'undefined'}`)
-  console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`)
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`)
-  console.log(`🌐 Server listening on 0.0.0.0:${PORT}`)
+  console.log(` Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`)
+  console.log(` Environment: ${process.env.NODE_ENV || 'development'}`)
+  console.log(` Server listening on 0.0.0.0:${PORT}`)
 })
 
 export default app

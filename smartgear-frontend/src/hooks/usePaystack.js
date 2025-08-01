@@ -11,10 +11,9 @@ const usePaystack = () => {
     setError(null)
     
     try {
-      // Prepare payment data
       const paymentPayload = {
         email: paymentInfo.email,
-        amount: paymentInfo.amount, // Amount in GHS (backend will convert to pesewas)
+        amount: paymentInfo.amount,
         currency: paymentInfo.currency || 'GHS',
         customerName: paymentInfo.customerName,
         phone: paymentInfo.phone,

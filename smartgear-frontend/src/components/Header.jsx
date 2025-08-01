@@ -25,12 +25,6 @@ const Header = () => {
               >
                 All Products
               </Link>
-              <Link
-                to="/about"
-                className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
-              >
-                About Us
-              </Link>
               <button
                 onClick={() => document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"

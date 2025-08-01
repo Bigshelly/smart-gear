@@ -250,7 +250,8 @@ const ProductDetails = () => {
           <div className="flex gap-4">
             <Button
               size="lg"
-              className="flex-1"
+              variant="outline"
+              className="flex-1 bg-white text-foreground border-foreground/20 hover:bg-muted"
               onClick={handleAddToCart}
               disabled={!product.inStock || isAdding}
             >
@@ -259,8 +260,7 @@ const ProductDetails = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="flex-1"
+              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={handleBuyNow}
               disabled={!product.inStock}
             >
